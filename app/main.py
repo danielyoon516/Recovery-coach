@@ -35,3 +35,25 @@ def create_workout(data: WorkoutIn):
 @app.get("/workouts", response_model=list[Workout])
 def list_workouts():
     return workouts
+
+
+class SleepIn(BaseModel):
+    sleep_date: date
+    hours: float = Field(ge=0, le=24)
+    quality: int = Field(ge=1, le=5)
+
+class Sleep(SleepIn):
+    id: int
+
+sleeps: list[Sleep] = []
+
+@app.post("/sleeps", response_model=Sleep, status_code = 201)
+def create_sleep(data: SleepIn):
+    sleep = Sleep(id = len(sleeps) + 1, **data.model_dump())
+    sleeps.append(sleep)
+    return sleep
+
+@app.get("/sleeps", response_model = list[Sleep])
+def list_sleeps():
+    return sleeps
+

@@ -25,3 +25,5 @@ def test_create_and_list_workout():
 def test_rejects_invalid_rpe():
     res = client.post("/workouts", json={**VALID, "rpe": 11})
     assert res.status_code == 422
+
+

@@ -2,3 +2,6 @@ fastapi
 uvicorn
 pytest
 httpx
+sqlmodel
+psycopg[binary]
+python-dotenv

@@ -17,6 +17,10 @@ app = FastAPI(title="Recovery Coach", lifespan=lifespan)
 
 SessionDep = Annotated[Session, Depends(get_session)]
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 
 class WorkoutIn(SQLModel):
     workout_date: date

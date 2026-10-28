@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from datetime import date
 from typing import Annotated
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from sqlmodel import Field, Session, SQLModel, select
 from app.db import create_db_and_tables, get_session
 
@@ -16,6 +16,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Recovery Coach", lifespan=lifespan)
 
 SessionDep = Annotated[Session, Depends(get_session)]
+
 
 @app.get("/health")
 def health():
@@ -45,6 +46,14 @@ def create_workout(data: WorkoutIn, session: SessionDep):
 @app.get("/workouts", response_model=list[Workout])
 def list_workouts(session: SessionDep):
     return session.exec(select(Workout)).all()
+
+
+@app.get("/workouts/{workout_id}", response_model=Workout)
+def get_workout(workout_id: int, session: SessionDep):
+    workout = session.get(Workout, workout_id)
+    if workout is None:
+        raise HTTPException(status_code=404, detail="Workout not found")
+    return workout
 
 
 class SleepIn(SQLModel):

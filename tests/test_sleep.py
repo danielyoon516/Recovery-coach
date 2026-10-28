@@ -4,12 +4,6 @@ from fastapi.testclient import TestClient
 VALID = {"sleep_date": "2026-10-24", "hours": 8, "quality": 4}
 
 
-
-def test_health(client: TestClient):
-    assert client.get("/health").json() == {"status": "ok"}
-
-
-
 def test_create_and_list_sleep(client: TestClient):
     res = client.post("/sleeps", json=VALID)
     assert res.status_code == 201

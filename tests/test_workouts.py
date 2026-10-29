@@ -42,3 +42,19 @@ def test_update_workout(client: TestClient):
 def test_update_missing_workout(client: TestClient):
     res = client.patch("/workouts/9999", json={"rpe": 9})
     assert res.status_code == 404
+
+
+def test_delete_workout(client: TestClient):
+    res = client.post("/workouts", json=VALID)
+    workout_id = res.json()["id"]
+
+    res = client.delete(f"/workouts/{workout_id}")
+    assert res.status_code == 204
+
+    res = client.get(f"/workouts/{workout_id}")
+    assert res.status_code == 404
+
+
+def test_delete_missing_workout(client: TestClient):
+    res = client.delete("/workouts/9999")
+    assert res.status_code == 404

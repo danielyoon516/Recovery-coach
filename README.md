@@ -71,5 +71,5 @@ Tests run against an isolated in-memory SQLite database, so they never touch rea
 | GET | `/sleeps` | List all sleep entries |
 | POST | `/sleeps` | Create a sleep entry |
 | GET | `/sleeps/{sleep_id}` | Get a sleep entry by ID |
-| PATCH | `/sleeps/{sleep_id
+| PATCH | `/sleeps/{sleep_id}` | Partially update a sleep |
 

@@ -53,6 +53,7 @@ def test_delete_sleep(client: TestClient):
 
     res = client.get(f"/sleeps/{sleep_id}")
     assert res.status_code == 404
+    assert res.json()["detail"] == "Sleep not found"
 
 
 def test_delete_missing_sleep(client: TestClient):

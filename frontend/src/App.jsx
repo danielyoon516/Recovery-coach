@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 function WorkoutItem({ workout }) {
   return (
     <li>
@@ -15,22 +17,36 @@ function TotalDuration({ workouts }) {
 }
 
 function App() {
-  const workouts = [
+  const [workouts, setWorkouts] = useState([
     { id: 1, type: "run", duration_min: 40, rpe: 6 },
     { id: 2, type: "lift", duration_min: 60, rpe: 8 },
-    { id: 3, type: "swim", duration_min: 30, rpe: 5 },
-  ];
+  ]);
+
+  function addSample() {
+    const newWorkout = {
+      id: Date.now(),
+      type: "bike",
+      duration_min: 45,
+      rpe: 7,
+    };
+    setWorkouts([...workouts, newWorkout]);
+  }
+
+  function clearAll() {
+    setWorkouts([]);
+  }
 
   return (
     <div>
       <h1>Recovery Coach</h1>
+      <button onClick={addSample}>Add sample workout</button>
       <ul>
         {workouts.map((w) => (
           <WorkoutItem key={w.id} workout={w} />
         ))}
       </ul>
-
       <TotalDuration workouts={workouts} />
+      <button onClick={clearAll}> Clear All </button>
     </div>
   );
 }

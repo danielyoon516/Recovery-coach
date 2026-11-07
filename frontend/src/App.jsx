@@ -1,4 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+function WorkoutForm() {
+  const [workoutDate, setWorkoutDate] = useState("");
+  const [workoutType, setWorkoutType] = useState("");
+  const [durationMin, setDurationMin] = useState("");
+  const [rpe, setRPE] = useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const res = await fetch("/api/workouts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        workout_date: workoutDate,
+        type: workoutType,
+        duration_min: Number(durationMin),
+        rpe: Number(rpe),
+      }),
+    });
+    console.log(res.status, await res.json());
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="date"
+        value={workoutDate}
+        onChange={(e) => setWorkoutDate(e.target.value)}
+      />
+      <input
+        placeholder="Type (e.g. run)"
+        value={workoutType}
+        onChange={(e) => setWorkoutType(e.target.value)}
+      />
+      <input
+        placeholder="Duration (min)"
+        type="number"
+        value={durationMin}
+        onChange={(e) => setDurationMin(e.target.value)}
+      />
+
+      <input
+        placeholder="RPE (1 - 10)"
+        type="number"
+        value={rpe}
+        onChange={(e) => setRPE(e.target.value)}
+      />
+      <button type="submit">Add Workout</button>
+    </form>
+  );
+}
 
 function WorkoutItem({ workout }) {
   return (
@@ -17,36 +68,27 @@ function TotalDuration({ workouts }) {
 }
 
 function App() {
-  const [workouts, setWorkouts] = useState([
-    { id: 1, type: "run", duration_min: 40, rpe: 6 },
-    { id: 2, type: "lift", duration_min: 60, rpe: 8 },
-  ]);
+  const [workouts, setWorkouts] = useState([]);
 
-  function addSample() {
-    const newWorkout = {
-      id: Date.now(),
-      type: "bike",
-      duration_min: 45,
-      rpe: 7,
-    };
-    setWorkouts([...workouts, newWorkout]);
-  }
-
-  function clearAll() {
-    setWorkouts([]);
-  }
+  useEffect(() => {
+    async function load() {
+      const res = await fetch("/api/workouts");
+      const data = await res.json();
+      setWorkouts(data);
+    }
+    load();
+  }, []);
 
   return (
     <div>
       <h1>Recovery Coach</h1>
-      <button onClick={addSample}>Add sample workout</button>
+      <WorkoutForm />
       <ul>
         {workouts.map((w) => (
           <WorkoutItem key={w.id} workout={w} />
         ))}
       </ul>
       <TotalDuration workouts={workouts} />
-      <button onClick={clearAll}> Clear All </button>
     </div>
   );
 }

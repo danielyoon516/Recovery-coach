@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-function WorkoutForm() {
+function WorkoutForm({ onCreated }) {
   const [workoutDate, setWorkoutDate] = useState("");
   const [workoutType, setWorkoutType] = useState("");
   const [durationMin, setDurationMin] = useState("");
-  const [rpe, setRPE] = useState("");
+  const [rpe, setRpe] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -18,7 +18,10 @@ function WorkoutForm() {
         rpe: Number(rpe),
       }),
     });
-    console.log(res.status, await res.json());
+    if (res.ok) {
+      const created = await res.json();
+      onCreated(created);
+    }
   }
 
   return (
@@ -39,12 +42,11 @@ function WorkoutForm() {
         value={durationMin}
         onChange={(e) => setDurationMin(e.target.value)}
       />
-
       <input
-        placeholder="RPE (1 - 10)"
+        placeholder="RPE (1–10)"
         type="number"
         value={rpe}
-        onChange={(e) => setRPE(e.target.value)}
+        onChange={(e) => setRpe(e.target.value)}
       />
       <button type="submit">Add Workout</button>
     </form>
@@ -70,6 +72,10 @@ function TotalDuration({ workouts }) {
 function App() {
   const [workouts, setWorkouts] = useState([]);
 
+  function handleCreated(newWorkout) {
+    setWorkouts([...workouts, newWorkout]);
+  }
+
   useEffect(() => {
     async function load() {
       const res = await fetch("/api/workouts");
@@ -82,7 +88,7 @@ function App() {
   return (
     <div>
       <h1>Recovery Coach</h1>
-      <WorkoutForm />
+      <WorkoutForm onCreated={handleCreated} />
       <ul>
         {workouts.map((w) => (
           <WorkoutItem key={w.id} workout={w} />

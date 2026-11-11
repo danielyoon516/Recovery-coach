@@ -5,6 +5,7 @@ function WorkoutForm({ onCreated }) {
   const [workoutType, setWorkoutType] = useState("");
   const [durationMin, setDurationMin] = useState("");
   const [rpe, setRpe] = useState("");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -21,6 +22,13 @@ function WorkoutForm({ onCreated }) {
     if (res.ok) {
       const created = await res.json();
       onCreated(created);
+      setWorkoutDate("");
+      setWorkoutType("");
+      setDurationMin("");
+      setRpe("");
+      setError("");
+    } else {
+      setError("Invalid input — check all fields.");
     }
   }
 
@@ -49,6 +57,7 @@ function WorkoutForm({ onCreated }) {
         onChange={(e) => setRpe(e.target.value)}
       />
       <button type="submit">Add Workout</button>
+      {error && <p>{error}</p>}
     </form>
   );
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { WorkoutForm, WorkoutItem, TotalDuration } from "./components/Workouts";
 
-
 function App() {
   const [workouts, setWorkouts] = useState([]);
 

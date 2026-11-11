@@ -1,4 +1,3 @@
-
 function WorkoutForm({ onCreated }) {
   const [workoutDate, setWorkoutDate] = useState("");
   const [workoutType, setWorkoutType] = useState("");

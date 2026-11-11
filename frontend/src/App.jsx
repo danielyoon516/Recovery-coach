@@ -62,10 +62,20 @@ function WorkoutForm({ onCreated }) {
   );
 }
 
-function WorkoutItem({ workout }) {
+function WorkoutItem({ workout, onDeleted }) {
+  async function handleDelete() {
+    const res = await fetch(`/api/workouts/${workout.id}`, {
+      method: "DELETE",
+    });
+    if (res.ok) {
+      onDeleted(workout.id);
+    }
+  }
+
   return (
     <li>
       {workout.type}, {workout.duration_min} min (RPE {workout.rpe})
+      <button onClick={handleDelete}>Delete</button>
     </li>
   );
 }
@@ -85,6 +95,10 @@ function App() {
     setWorkouts([...workouts, newWorkout]);
   }
 
+  function handleDeleted(id) {
+    setWorkouts(workouts.filter((w) => w.id !== id));
+  }
+
   useEffect(() => {
     async function load() {
       const res = await fetch("/api/workouts");
@@ -100,7 +114,7 @@ function App() {
       <WorkoutForm onCreated={handleCreated} />
       <ul>
         {workouts.map((w) => (
-          <WorkoutItem key={w.id} workout={w} />
+          <WorkoutItem key={w.id} workout={w} onDeleted={handleDeleted} />
         ))}
       </ul>
       <TotalDuration workouts={workouts} />

@@ -62,7 +62,13 @@ function WorkoutForm({ onCreated }) {
   );
 }
 
-function WorkoutItem({ workout, onDeleted }) {
+function WorkoutItem({ workout, onDeleted, onUpdated }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editType, setEditType] = useState(workout.type);
+  const [editDate, setEditDate] = useState(workout.workout_date);
+  const [editDuration, setEditDuration] = useState(workout.duration_min);
+  const [editRpe, setEditRpe] = useState(workout.rpe);
+
   async function handleDelete() {
     const res = await fetch(`/api/workouts/${workout.id}`, {
       method: "DELETE",
@@ -72,9 +78,48 @@ function WorkoutItem({ workout, onDeleted }) {
     }
   }
 
-  return (
+  async function handleSave() {
+    const res = await fetch(`/api/workouts/${workout.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        workout_date: editDate,
+        type: editType,
+        duration_min: Number(editDuration),
+        rpe: Number(editRpe),
+      }),
+    });
+    if (res.ok) {
+      onUpdated(await res.json());
+      setIsEditing(false);
+    }
+  }
+
+  return isEditing ? (
+    <li>
+      <input
+        type="date"
+        value={editDate}
+        onChange={(e) => setEditDate(e.target.value)}
+      />
+      <input value={editType} onChange={(e) => setEditType(e.target.value)} />
+      <input
+        type="number"
+        value={editDuration}
+        onChange={(e) => setEditDuration(e.target.value)}
+      />
+      <input
+        type="number"
+        value={editRpe}
+        onChange={(e) => setEditRpe(e.target.value)}
+      />
+      <button onClick={handleSave}>Save</button>
+      <button onClick={() => setIsEditing(false)}>Cancel</button>
+    </li>
+  ) : (
     <li>
       {workout.type}, {workout.duration_min} min (RPE {workout.rpe})
+      <button onClick={() => setIsEditing(true)}>Edit</button>
       <button onClick={handleDelete}>Delete</button>
     </li>
   );
@@ -99,6 +144,10 @@ function App() {
     setWorkouts(workouts.filter((w) => w.id !== id));
   }
 
+  function handleUpdated(updated) {
+    setWorkouts(workouts.map((w) => (w.id === updated.id ? updated : w)));
+  }
+
   useEffect(() => {
     async function load() {
       const res = await fetch("/api/workouts");
@@ -114,7 +163,12 @@ function App() {
       <WorkoutForm onCreated={handleCreated} />
       <ul>
         {workouts.map((w) => (
-          <WorkoutItem key={w.id} workout={w} onDeleted={handleDeleted} />
+          <WorkoutItem
+            key={w.id}
+            workout={w}
+            onDeleted={handleDeleted}
+            onUpdated={handleUpdated}
+          />
         ))}
       </ul>
       <TotalDuration workouts={workouts} />

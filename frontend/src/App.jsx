@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { WorkoutForm, WorkoutItem, TotalDuration } from "./components/Workouts";
+import { SleepForm, SleepItem } from "./components/Sleeps";
 
 function App() {
   const [workouts, setWorkouts] = useState([]);

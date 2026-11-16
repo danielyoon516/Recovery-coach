@@ -1,4 +1,6 @@
-function WorkoutForm({ onCreated }) {
+import { useState } from "react";
+
+export function WorkoutForm({ onCreated }) {
   const [workoutDate, setWorkoutDate] = useState("");
   const [workoutType, setWorkoutType] = useState("");
   const [durationMin, setDurationMin] = useState("");
@@ -60,7 +62,7 @@ function WorkoutForm({ onCreated }) {
   );
 }
 
-function WorkoutItem({ workout, onDeleted, onUpdated }) {
+export function WorkoutItem({ workout, onDeleted, onUpdated }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editType, setEditType] = useState(workout.type);
   const [editDate, setEditDate] = useState(workout.workout_date);
@@ -123,7 +125,7 @@ function WorkoutItem({ workout, onDeleted, onUpdated }) {
   );
 }
 
-function TotalDuration({ workouts }) {
+export function TotalDuration({ workouts }) {
   let total = 0;
   for (const w of workouts) {
     total += w.duration_min;
